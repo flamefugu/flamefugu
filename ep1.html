@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Episode 1</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+#ph{position:absolute;inset:0;width:100%;height:100%;border:0}
+#bk{position:fixed;left:auto;top:auto;right:auto;bottom:auto;width:0;height:0;border:0;background:transparent;z-index:10;display:none;opacity:1;pointer-events:auto}
+#bk.tab{display:block;right:0;top:62%;width:28px;height:88px}
+#bk.full{display:block;left:0;top:0;width:100%;height:100%}
+#bk.np{pointer-events:none}
+</style></head><body>
+<!-- Host Episode 1: ponsel + buku kasus. Taruh satu folder dengan ponsel_aku.html dan buku_kasus.html. -->
+<iframe id="ph" src="ponsel_aku.html"></iframe>
+<iframe id="bk" src="buku_kasus.html" allowtransparency="true"></iframe>
+<script>
+var EPISODE=1,PHONES=[document.getElementById('ph')];
+/* ===== Buku kasus (satu file untuk semua episode: buku_kasus.html) ===== */
+var bk=document.getElementById('bk'),bkOk=false,bkQ=[];
+function toBk(d){if(!bkOk){bkQ.push(d);return}try{bk.contentWindow.postMessage(d,'*')}catch(_){}}
+function toPhones(d){PHONES.forEach(function(f){try{f.contentWindow.postMessage(d,'*')}catch(_){}})}
+function bkMsg(e,d){
+ if(e.source===bk.contentWindow){
+  if(d.bkLayout){bk.className=d.bkLayout==='hidden'?'':d.bkLayout;if(d.pe===false)bk.classList.add('np')}
+  if(d.bkInfo||d.bkState)toPhones(d);
+  if(d.bkReady){bkOk=true;try{bk.contentWindow.postMessage({caseEp:EPISODE},'*')}catch(_){}bkQ.splice(0).forEach(function(x){try{bk.contentWindow.postMessage(x,'*')}catch(_){}})}
+  return true}
+ if(d.caseEv||d.caseStart||d.caseTxt||d.caseProf||d.caseImg||d.bkOpen||d.bkReset||d.bkDemo){toBk(d);return true}
+ return false}
+window.addEventListener('message',function(e){var d=e.data;if(!d||typeof d!=='object')return;bkMsg(e,d)});
+</script></body></html>

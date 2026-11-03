@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buku Kasus</title>
+<style>
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}
+
+#nbTab{position:fixed;right:0;top:62%;width:28px;height:88px;z-index:2147482800;border-radius:13px 0 0 13px;background:#2b2622;border:1px solid #54483a;border-right:0;display:none;align-items:center;justify-content:center;touch-action:none;box-shadow:-3px 3px 12px #0009;color:#e0a03a;-webkit-tap-highlight-color:transparent}
+#nbTab.on{display:flex;animation:nbIn .5s ease both}
+body.nb-open #nbTab{display:none!important}
+#nbTab svg{width:17px;height:17px;pointer-events:none}
+#nbTab.new::after{content:"";position:absolute;top:9px;left:6px;width:8px;height:8px;border-radius:50%;background:#e0a03a;animation:nbBl 1.1s infinite}
+@keyframes nbIn{from{transform:translateX(34px)}to{transform:none}}
+@keyframes nbBl{50%{opacity:.2}}
+#nbBook{position:fixed;inset:0;z-index:2147482790;display:none;background:rgba(0,0,0,.6);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#e9e4da}
+#nbBook.on{display:block}
+#nbBook.on .nbSheet{animation:nbSl .32s ease both}
+@keyframes nbSl{from{transform:translateX(100%)}to{transform:none}}
+.nbSheet{position:absolute;left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 44px);bottom:calc(env(safe-area-inset-bottom,0px) + 24px);background:#1b1a18;border:1px solid #34312c;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 50px #000a}
+.nbRings{position:absolute;left:0;top:0;bottom:0;width:30px;background:#232220;border-right:1px solid #34312c}
+.nbRings i{position:absolute;left:9px;width:14px;height:6px;border-radius:3px;background:#77736b}
+.nbTop{flex:none;padding:8px 0 4px 30px;touch-action:none;cursor:grab}
+.nbGrip{width:44px;height:4px;border-radius:2px;background:#4a463f;margin:0 auto 6px}
+.nbHd{display:flex;align-items:flex-start;justify-content:space-between;padding:0 14px 0 14px}
+.nbHd h2{margin:0;font:600 25px/1.15 "Iowan Old Style","Palatino Linotype",Georgia,serif;letter-spacing:.2px}
+.nbHd p{margin:3px 0 0;font-size:13px;color:#a39d90}
+.nbX0{border:0;background:#2b2926;color:#cfc8ba;width:32px;height:32px;border-radius:50%;font-size:17px;line-height:1}
+.nbBody{flex:1;overflow-y:auto;padding:8px 14px 10px 44px;-webkit-overflow-scrolling:touch}
+.nbNav{flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 14px 10px 44px}
+.nbNav button{width:46px;height:36px;border-radius:10px;border:1px solid #3a3731;background:#22211e;color:#e9e4da;font-size:18px}
+.nbNav button:disabled{opacity:.3}
+.nbNav span{font-size:13px;color:#8d877b}
+.nbGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;padding-top:6px}
+.nbPol{position:relative;background:#232220;border:1px solid #3a3731;border-radius:6px;padding:14px 8px 9px;text-align:center;transform:rotate(var(--r,0deg))}
+.nbPol.sel{border-color:#e0a03a}
+.nbTape{position:absolute;top:-9px;left:50%;width:46px;height:15px;margin-left:-23px;background:#4a2f12;opacity:.9}
+.nbPh{height:92px;background:#171614;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#6f6a60}
+.nbPh svg{width:34px;height:34px}
+.nbPol b{display:block;margin:8px 0 6px;font:600 16px "Iowan Old Style",Georgia,serif}
+.nbStamp{border:2px solid #77736b;color:#cfc8ba;background:transparent;border-radius:7px;padding:5px 10px;font:600 14px "Segoe Print","Bradley Hand","Comic Sans MS",cursive;transform:rotate(-3deg)}
+.nbStamp.s1{border-color:#e0a03a;color:#e0a03a}
+.nbStamp.s2{border-color:#e0594a;color:#e0594a}
+.nbStamp.s3{border-color:#6fae7e;color:#6fae7e}
+.nbCnt{display:block;margin-top:6px;font-size:11.5px;color:#8d877b}
+.nbLink{margin-top:14px;padding:10px 12px;background:#202020;border:1px solid #34312c;border-radius:8px;font-size:13.5px;line-height:1.45}
+.nbLink b{display:block;margin-bottom:4px;font:600 15px "Iowan Old Style",Georgia,serif}
+.nbLink li{margin:3px 0 3px 16px}
+.nbSticky{margin-top:12px;padding:11px 13px;background:#3a2408;color:#f0b24a;font:500 15px/1.4 "Iowan Old Style",Georgia,serif;transform:rotate(-.6deg)}
+.nbSticky:nth-of-type(even){transform:rotate(.7deg);background:#33260f}
+.nbQc{margin:2px 2px 6px;font:600 13px system-ui,sans-serif;color:#8d877b}.nbQi{display:flex;align-items:flex-start;gap:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .2s}.nbQi .nbBox{flex:none;width:24px;height:24px;margin-top:1px;border:2px solid #e0a03a;border-radius:6px;display:grid;place-items:center;font:700 16px/1 system-ui,sans-serif;color:#1b1a18;font-style:normal}.nbQi.done .nbBox{background:#e0a03a}.nbQi.done span{text-decoration:line-through;text-decoration-thickness:2px;opacity:.6}.nbQw{display:block}.nbAns{display:block;width:100%;box-sizing:border-box;margin-top:10px;min-height:46px;max-height:180px;resize:none;overflow-y:auto;background:#1b1a18;color:#f3eee6;caret-color:#e0a03a;border:1px solid #5a4421;border-radius:8px;padding:9px 11px;font:16px/1.45 "Iowan Old Style",Georgia,serif;outline:none;-webkit-appearance:none;appearance:none}.nbAns::placeholder{color:#8d877b;font-style:italic}.nbAns:focus{border-color:#e0a03a;box-shadow:0 0 0 2px #e0a03a33}
+.nbClip{position:relative;margin:16px 2px 0;padding:14px 12px 11px;background:#22211f;border:1px solid #3a3731;border-radius:5px;transform:rotate(var(--r,0deg))}
+.nbClip:first-child{margin-top:10px}
+.nbClip .nbTape{left:30%}
+.nbClip h3{margin:0 0 5px;font:600 16px "Iowan Old Style",Georgia,serif}
+.nbClip p{margin:0;font-size:14px;line-height:1.5;color:#d6d0c3}
+.nbTags{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.nbTags em{font-style:normal;font-size:11.5px;color:#e0a03a;border:1px solid #5a4421;border-radius:10px;padding:2px 8px}
+.nbQ{border-left:3px solid #4a463f;padding:2px 0 2px 10px;color:#e9e4da}
+.nbXh{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.nbAv{width:32px;height:32px;border-radius:50%;background:#b3261e;color:#fff;font:700 15px/32px system-ui;text-align:center;font-style:normal}
+.nbXh b{display:block;font:600 14px system-ui}
+.nbXh small{color:#8d877b;font-size:12px}
+.nbXs{margin-top:8px;font-size:12px;color:#8d877b}
+.nbCm{margin-top:9px;padding:8px 10px;background:#1a1918;border-radius:7px;font-size:13px;line-height:1.45;color:#bdb6a8}
+.nbCm b{font-size:11.5px;color:#8d877b;display:block;margin-bottom:3px}
+.nbVs{display:grid;gap:7px}
+.nbVs div{padding:7px 9px;background:#1a1918;border-radius:7px;font-size:13.5px;line-height:1.45}
+.nbVs small{display:block;color:#8d877b;font-size:11.5px;margin-bottom:2px}
+.nbEmpty{padding:26px 8px;color:#8d877b;font-size:14px;line-height:1.5;text-align:center}
+.nbTl{position:relative;margin:8px 0 0 8px;padding-left:18px;border-left:2px solid #3a3731}
+.nbTl div{position:relative;margin:0 0 15px;font-size:14.5px;line-height:1.45}
+.nbTl div::before{content:"";position:absolute;left:-25px;top:5px;width:10px;height:10px;border-radius:50%;background:#e0a03a}
+.nbTl small{display:block;color:#8d877b;font-size:12px}
+#nbNar{position:fixed;inset:0;z-index:2147482795;background:#0c0c0b;color:#e9e4da;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px 30px;text-align:center;font:500 20px/1.65 "Iowan Old Style","Palatino Linotype",Georgia,serif;-webkit-tap-highlight-color:transparent}
+#nbNar p{margin:0 0 14px;opacity:0;transform:translateY(6px);transition:opacity .7s ease,transform .7s ease}
+#nbNar p.on{opacity:1;transform:none}
+#nbNar button{margin-top:22px;opacity:0;pointer-events:none;border:1px solid #e0a03a;background:transparent;color:#e0a03a;padding:11px 22px;border-radius:12px;font:600 16px system-ui;transition:opacity .6s}
+#nbNar button.on{opacity:1;pointer-events:auto}
+#nbNar small{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);color:#6f6a60;font:13px system-ui}
+@media(prefers-reduced-motion:reduce){#nbTab.on,#nbBook.on .nbSheet{animation:none}#nbNar p{transition:none}}
+
+html.tm #nbTab{top:0}
+.nbEpT{position:absolute;top:6px;right:9px;font:700 9.5px system-ui,sans-serif;letter-spacing:1px;color:#8d877b;text-transform:uppercase}
+.nbNewT{position:absolute;top:-8px;right:12px;background:#e0a03a;color:#1b1a18;font:700 10px system-ui,sans-serif;letter-spacing:.8px;padding:2px 7px;border-radius:4px;transform:rotate(3deg)}
+.nbTlEp{margin:2px 0 12px -26px;font:700 11px system-ui,sans-serif;letter-spacing:1.4px;color:#e0a03a;text-transform:uppercase}
+.nbTlEp::before{display:none!important}
+.nbQe{display:inline-block;margin-left:6px;font:700 9.5px system-ui,sans-serif;letter-spacing:.8px;color:#c28a2e;border:1px solid #6a4d1b;border-radius:4px;padding:1px 5px;vertical-align:2px;font-style:normal}
+.nbSay{margin-top:14px;padding:10px 12px;background:#1b1a18;border-left:3px solid #e0a03a;border-radius:6px}.nbSay>b{display:block;margin-bottom:2px;font:600 15px "Iowan Old Style",Georgia,serif}.nbSay p{margin:8px 0 7px;font:italic 14.5px/1.45 "Iowan Old Style",Georgia,serif;color:#e8e2d4}.nbSay .nbStamp{font-size:12.5px;padding:3px 9px;margin-bottom:4px}.nbSay .nbNo{color:#8d877b;font-size:13.5px}
+#nbToast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 14px);left:50%;transform:translate(-50%,-14px);z-index:2147482700;max-width:86%;box-sizing:border-box;padding:10px 15px;border-radius:14px;border-left:3px solid #e0a03a;background:#17171b;color:#f3eee6;font:600 13px/1.35 system-ui,sans-serif;box-shadow:0 8px 24px #0008;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}#nbToast.on{opacity:1;transform:translate(-50%,0)}
+</style></head><body>
+<script>
+(function(){
+/* =====================================================================
+   BUKU KASUS (semua episode). Satu file, satu penyimpanan: bk_case_v2.
+   Cara kerja: halaman ini dipasang sebagai iframe di halaman induk (ep1.html / ep2.html / ep3.html ...).
+   Ponsel mengirim kejadian lewat postMessage ke induk, induk meneruskannya ke sini.
+   Menambah episode baru: tambah baris di EV, QS, CL (dan SUS/SHOW kalau ada tersangka baru). Tandai dengan e:<nomor episode>.
+   ===================================================================== */
+var KEY='bk_case_v2',OLDKEY='nb_case_v1';
+var S={started:0,narr:0,ev:{},st:{},tr:{},cl:{},qc:{},qt:{},qa:{},p:0,sel:'unknown',nw:{},prof:{},eps:{}};
+var M={txt:{U:[],Ibu:[],G:[]},img:{}};
+function merge(v){if(v&&typeof v==='object')for(var k in v)S[k]=v[k]}
+try{var cur=JSON.parse(localStorage.getItem(KEY)||'null');if(cur)merge(cur);else{var old=JSON.parse(localStorage.getItem(OLDKEY)||'null');if(old){merge(old);S.eps[1]=1}}}catch(_){}
+['ev','st','tr','cl','qc','qt','qa','nw','prof','eps'].forEach(function(k){S[k]=S[k]||{}});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(_){}info()}
+function post(o){try{if(parent&&parent!==window)parent.postMessage(o,'*')}catch(_){}}
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function twin(){return String(S.prof.twin||'').trim()||'Nami'}
+function gone(){var d=new Date();d.setDate(d.getDate()-27);return d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+function findTxt(who,re){var a=M.txt[who]||[];for(var i=0;i<a.length;i++){if(a[i]&&re.test(a[i]))return a[i]}return''}
+
+/* ===== DATA ===== */
+/* Tersangka. k = kunci, n = nama tampil. */
+var SUS=[{k:'unknown',n:function(){return'Unknown'}},{k:'ibu',n:function(){return'Ibu'}},{k:'yvonne',n:function(){return'Kak Yvonne'}},{k:'nami',n:twin},
+ {k:'orang',n:function(){return'Pemegang ponsel'}},{k:'caleb',n:function(){return'Caleb'}}];
+var STAMP=['Belum jelas','Curiga','Sangat sus','Bukan pelaku'];
+/* Tersangka muncul bertahap: id bukti pemicu ('@start' = kasus dimulai). [] = tidak pernah muncul. Tanpa entri = muncul saat ada bukti yang menunjuk dia. */
+var SHOW={unknown:['@start'],nami:['tahu'],ibu:['ibu'],yvonne:[],orang:['curi'],caleb:['caleb','misscall']};
+/* Bukti. e = episode, o = urutan linimasa, p = tersangka yang ditunjuk, re+who = cari teks asli dari chat (U = Unknown, Ibu, G = grup). */
+var EV={
+ /* ---------- EPISODE 1 ---------- */
+ pisah:{e:1,k:'chat',o:1,t:'Kami berpisah',re:/Delapan tahun lalu/i,who:'U',fb:function(){return'Delapan tahun lalu, kami berpisah.'},p:['nami'],tl:'Aku dan saudara kembarku berpisah, sekitar delapan tahun lalu'},
+ sebulan:{e:1,k:'chat',o:2,t:'Pesan Unknown',re:/hampir sebulan|tidak bisa ditemukan/i,who:'U',fb:function(){return twin()+' sudah hampir sebulan tidak bisa ditemukan.'},p:['unknown'],tl:function(){return twin()+' menghilang, hampir sebulan lalu'}},
+ lcn:{e:1,k:'x',o:3,t:'Berita LCN',p:[],tl:'Polisi Linkon mulai operasi pencarian'},
+ tutup:{e:1,k:'chat',o:4,t:'Kasus ditutup',re:/Kasus sudah ditutup|pergi atas kemauannya/i,who:'U',fb:function(){return'Kasus sudah ditutup. Polisi menganggap '+twin()+' pergi atas kemauannya sendiri.'},p:[],tl:'Polisi menutup kasus beberapa hari setelah pencarian'},
+ foto:{e:1,k:'photo',o:5,t:'Foto dari Unknown',fb:function(){return'Foto '+twin()+', dikirim dari nomor yang tidak kukenal.'},p:['unknown'],tl:'Unknown mengirimkan foto ke nomorku'},
+ tangan:{e:1,k:'chat',o:6,t:'Tangan di foto',re:/tangan lu kelihatan/i,who:'U',fb:function(){return'Tangan cowok ikut terfoto. Setelah kutegur, Unknown menghapus fotonya.'},p:['unknown'],tl:'Tangan cowok ikut terfoto, lalu Unknown menghapus fotonya'},
+ ibu:{e:1,k:'chat',o:7,t:'Paket di meja belajar',re:/meja belajar/i,who:'Ibu',fb:function(){return'Ibu menyebut paket di meja belajar.'},p:['ibu'],tl:'Ibu bicara soal paket di meja belajar'},
+ paket:{e:1,k:'item',o:8,t:'Paket tanpa pengirim',fb:function(){return'Paket di meja belajarku. Tidak ada nama pengirim di mana pun.'},p:[],tl:'Paket tanpa nama pengirim menungguku di meja belajar'},
+ ponsel:{e:1,k:'item',o:9,t:'Ponsel di dalam paket',fb:function(){return'Isi paketnya sebuah ponsel. Entah milik siapa.'},p:[],tl:'Isi paket: sebuah ponsel yang bukan milikku'},
+ tahu:{e:1,k:'chat',o:10,t:'Unknown tahu paketnya sampai',re:/Sudah kamu buka/i,who:'U',fb:function(){return'Unknown bertanya apakah paketnya sudah kubuka.'},p:['unknown'],tl:'Unknown bertanya apakah aku sudah membuka paketnya'},
+ /* ---------- EPISODE 2 (muncul bertahap sesuai cerita) ---------- */
+ kirim:{e:2,k:'chat',o:11,t:'Unknown mengaku mengirim paket',re:/Saya yang kirim kemarin/i,who:'U',fb:function(){return'Saya yang kirim kemarin.'},p:['unknown'],tl:'Unknown mengaku dialah yang mengirim paket itu'},
+ milik:{e:2,k:'chat',o:12,t:'Ponselnya milik Nami',re:/Itu ponsel Nami/i,who:'U',fb:function(){return'Itu ponsel '+twin()+'.'},p:[],tl:function(){return'Ponsel di dalam paket ternyata milik '+twin()}},
+ dengar:{e:2,k:'chat',o:13,t:'Unknown mendengar ucapan Ibu',re:/Ibumu yang mengatakannya/i,who:'U',fb:function(){return'Saya mendengarnya. Ibumu yang mengatakannya.'},p:['unknown'],tl:'Unknown tahu soal meja belajar karena mengaku mendengar Ibu langsung'},
+ curiga:{e:2,k:'chat',o:14,t:'Unknown curiga Nami tidak kabur',re:/Nami hilang bukan karena kabur/i,who:'U',fb:function(){return'Saya curiga '+twin()+' hilang bukan karena kabur dari rumah.'},p:['unknown'],tl:function(){return'Unknown curiga '+twin()+' hilang bukan karena kabur dari rumah'}},
+ terdekat:{e:2,k:'chat',o:15,t:'Orang terdekat Nami dicurigai',re:/orang-orang terdekat Nami/i,who:'U',fb:function(){return'Saya mencurigai orang-orang terdekat '+twin()+'.'},p:[],tl:function(){return'Unknown mencurigai orang-orang terdekat '+twin()}},
+ curi:{e:2,k:'chat',o:16,t:'Ponsel diambil dari seseorang',re:/Saya mengambilnya dari orang itu/i,who:'U',fb:function(){return'Orang yang memegang ponsel itu sebelum saya. Saya mengambilnya dari orang itu.'},p:['unknown','orang'],tl:'Unknown mengaku mengambil ponsel dari orang yang memegangnya sebelum dia'},
+ sandi:{e:2,k:'chat',o:17,t:'Unknown tahu sandinya',re:/Saya hanya menebak/i,who:'U',fb:function(){return'Unknown langsung tahu sandi ponsel '+twin()+' (1306), lalu bilang hanya menebak.'},p:['unknown'],tl:function(){return'Unknown langsung tahu sandi ponsel '+twin()+', lalu bilang hanya menebak'}},
+ kosong:{e:2,k:'item',o:18,t:'Ponsel Nami nyaris kosong',fb:function(){return'Tidak ada foto, tidak ada chat, tidak ada email. Hanya satu kontak: Caleb. Dan tidak ada jaringan.'},p:[],tl:function(){return'Ponsel '+twin()+' nyaris kosong: tanpa foto, hanya satu kontak bernama Caleb'}},
+ caleb:{e:2,k:'chat',o:19,t:'Larangan soal Caleb',re:/telepon masuk dengan nama Caleb/i,who:'U',fb:function(){return'Kalau ada telepon masuk dengan nama Caleb, matikan, lalu kabari saya.'},p:['unknown','caleb'],tl:'Unknown melarangku bicara dengan Caleb kalau dia menelepon'},
+ misscall:{e:2,k:'item',o:20,t:'Caleb menelepon bertubi-tubi',fb:function(){return'Begitu ponsel '+twin()+' mendapat jaringan, langsung masuk 7 panggilan tak terjawab dari Caleb.'},p:['caleb'],tl:function(){return'Begitu ponsel '+twin()+' online, Caleb langsung memanggil berkali-kali'}},
+ telepon:{e:2,k:'item',o:21,t:'Caleb menelepon',fb:function(){return'Setelah panggilan tak terjawab, Caleb menelepon lagi di ponsel '+twin()+'.'},p:['caleb'],tl:'Caleb menelepon langsung di ponsel yang sama'},
+ peringatan:{e:2,k:'item',o:22,t:'Peringatan Caleb',fb:function(){return'Caleb: “Jangan percaya siapa pun yang chat kamu.”'},p:['caleb','unknown'],tl:'Caleb memperingatkanku agar tidak percaya siapa pun yang chat denganku'},
+ tahuangkat:{e:2,k:'chat',o:23,t:'Unknown tahu aku mengangkat telepon',re:/Kamu mengangkatnya/i,who:'U',fb:function(){return'Unknown bertanya, “Kamu mengangkatnya?” padahal aku belum cerita apa pun.'},p:['unknown'],tl:'Unknown langsung tahu aku mengangkat telepon Caleb, padahal tidak kuberi tahu'}
+};
+/* Pertanyaan: [id, pemicu, teks, episode]. Pemicu 'start' = kasus dimulai; selain itu id bukti. Tidak pernah dihapus; urutan mengikuti kapan muncul. */
+var QS=[
+ ['q1','start','Siapa Unknown?',1],['q2','start','Kenapa dia sembunyikan identitasnya?',1],['q6','start','Bagaimana dia tahu nomor ponselku?',1],
+ ['q3','sebulan','Apa hubungan dia dengan Nami? Benarkah dia hanya kenal?',1],['q5','sebulan','Kenapa dia mencari Nami?',1],['q10','sebulan','Di mana Nami sekarang?',1],
+ ['q4','pisah','Bagaimana Unknown tahu aku kembaran Nami?',1],
+ ['q7','tangan','Kenapa dia langsung menghapus foto saat aku menyadari sesuatu di fotonya?',1],['q8','tangan','Apa Unknown cowok?',1],['q13','tangan','Apa Unknown penguntit?',1],['q14','tangan','Kenapa dia ada di toilet cewek dan menemukan dompet Nami?',1],
+ ['q9','tutup','Apa Nami sungguh kabur?',1],['q11','tutup','Sebenarnya apa yang selama ini terjadi dengan Nami saat kami berpisah?',1],
+ ['q18','ibu','Siapa yang tahu paketnya ditaruh di meja belajar?',1],
+ ['q16','paket','Siapa yang mengirim paket tanpa nama ini ke rumahku?',1],['q12','paket','Bagaimana Unknown tahu alamat rumahku juga?',1],
+ ['q15','ponsel','Sebuah ponsel? Milik siapa?',1],['q17','tahu','Bagaimana Unknown tahu aku sudah mendapatkan paket misterius?',1],
+ /* Episode 2 */
+ ['q19','kirim','Kenapa Unknown repot-repot mengirim ponsel itu ke rumahku, bukan menjelaskannya langsung?',2],
+ ['q20','milik','Kalau ponsel ini milik Nami, kenapa tidak dia bawa saat menghilang?',2],
+ ['q21','dengar','Sedekat apa Unknown dengan rumahku sampai bisa mendengar ucapan Ibu?',2],
+ ['q22','curiga','Kalau Nami tidak kabur, apa yang sebenarnya terjadi padanya?',2],
+ ['q23','terdekat','Siapa saja orang terdekat Nami yang dicurigai Unknown?',2],
+ ['q24','curi','Siapa yang memegang ponsel Nami sebelum Unknown? Dan bagaimana Unknown mengambilnya?',2],
+ ['q25','sandi','Bagaimana Unknown bisa tahu sandinya hanya dengan “menebak”?',2],
+ ['q27','kosong','Kenapa ponsel Nami nyaris kosong? Siapa yang menghapus isinya?',2],
+ ['q26','caleb','Siapa Caleb? Kenapa Unknown tidak mau aku bicara dengannya?',2],
+ ['q28','misscall','Dari mana Caleb tahu ponsel Nami sudah menyala?',2],
+ ['q29','peringatan','Apa yang Caleb maksud dengan “jangan percaya siapa pun yang chat kamu”? Apa itu Unknown?',2],
+ ['q30','tahuangkat','Bagaimana Unknown tahu aku mengangkat telepon Caleb?',2]
+];
+/* Keterangan tersangka ("Menurut ..."). re = muncul setelah kalimat ini ada di chat; ev = syarat bukti; tanpa re = muncul begitu bukti ev ditemukan. */
+var CL={
+ unknown:[
+  {e:1,id:'u1',re:/Saya hanya orang yang kenal dengan Nami/i,in:['U'],t:'Saya hanya orang yang kenal dengan Nami.'},
+  {e:1,id:'u2',ev:'tahu',re:/Nami pernah menyinggungnya|melacakmu/i,in:['U'],t:'Nami pernah menyinggungnya. Saat pencarian buntu, saya baru ingat kamu dan melacakmu.'},
+  {e:1,id:'u3',re:/Ada alasannya/i,in:['U'],t:'Ada alasannya. Tidak ada waktu untuk menjelaskan.'},
+  {e:1,id:'u4',re:/pergi atas kemauannya/i,in:['U'],t:'Mereka menganggap Nami pergi atas kemauannya sendiri.'},
+  {e:1,id:'u5',re:/Sudah kamu buka/i,in:['U'],t:'Saya kirim sesuatu ke rumahmu.'},
+  {e:2,id:'u6',ev:'milik',re:/Saya menemukannya/i,in:['U'],t:'Saya menemukannya.'},
+  {e:2,id:'u7',ev:'dengar',re:/sudah tidak di sana/i,in:['U'],t:'Saya punya urusan lain. Saya sudah tidak di sana.'},
+  {e:2,id:'u8',ev:'dengar',re:/Ibumu yang mengatakannya/i,in:['U'],t:'Saya mendengarnya. Ibumu yang mengatakannya.'},
+  {e:2,id:'u9',ev:'sandi',re:/Saya hanya menebak/i,in:['U'],t:'Saya hanya menebak.'},
+  {e:2,id:'u10',re:/tidak menuduh tanpa bukti/i,in:['U'],t:'Saya tidak menuduh tanpa bukti. Ponsel itu yang akan membuktikannya.'},
+  {e:2,id:'u11',ev:'curi',re:/mengambilnya dari orang itu/i,in:['U'],t:'Kalau saya tidak mengambilnya, kita tidak akan tahu yang sebenarnya.'}
+ ],
+ ibu:[{e:1,id:'i1',re:/Nggak ada nama pengirimnya/i,in:['Ibu','G'],t:'Nggak ada nama pengirimnya, Ibu juga nggak tahu dari siapa.'}],
+ caleb:[
+  {e:2,id:'c1',ev:'peringatan',t:'Jangan percaya siapa pun yang chat kamu.'},
+  {e:2,id:'c2',ev:'peringatan',t:'Jangan matiin dulu. Kamu di mana sekarang?'}
+ ]
+};
+/* Aturan baca chat Unknown/Ibu: [pola, [id bukti], sumber]. '@s' = mulai kasus. */
+var R=[
+ [/hampir sebulan|tidak bisa ditemukan/i,['@s','foto','sebulan'],'U'],[/LCN_Breaking/,['lcn'],'U'],[/tangan lu kelihatan|Kenapa dihapus/i,['tangan'],'U'],
+ [/Delapan tahun lalu|dari panti|orang tua kita pisah/i,['pisah'],'U'],[/Kasus sudah ditutup|pergi atas kemauannya/i,['tutup'],'U'],[/meja belajar/i,['ibu'],'Ibu'],
+ [/Saya yang kirim kemarin/i,['kirim'],'U'],[/Itu ponsel Nami/i,['milik'],'U'],[/Ibumu yang mengatakannya/i,['dengar'],'U'],[/Nami hilang bukan karena kabur/i,['curiga'],'U'],
+ [/orang-orang terdekat Nami/i,['terdekat'],'U'],[/Saya mengambilnya dari orang itu/i,['curi'],'U'],[/Saya hanya menebak/i,['sandi'],'U'],
+ [/telepon masuk dengan nama Caleb/i,['caleb'],'U'],[/Kamu mengangkatnya/i,['tahuangkat'],'U']
+];
+function NARR(){return['Nomor asing. Satu foto. Tanpa salam, tanpa penjelasan.','Di foto itu ada '+twin()+', kembaranku, yang sudah delapan tahun tidak kulihat.','Kata si pengirim, '+twin()+' hilang hampir sebulan. Dan entah kenapa, dia memilih menghubungiku.','Aku tidak tahu siapa dia, dan aku tidak akan percaya begitu saja. Setiap kejanggalan akan kucatat.']}
+var TR=['Belum dinilai','Jujur','Bohong'],TRC=[0,3,2];
+var PG=[['Tersangka','Ketuk stempel untuk menandai. Nilai juga keterangan mereka: jujur atau bohong.'],['Bukti','Tertempel otomatis saat kamu menemukannya.'],['Linimasa','Disusun menurut cerita, bukan menurut urutan ketemu.'],['Pertanyaan','Centang kalau kamu sudah menemukan jawabannya. Pertanyaan tidak akan hilang.']];
+var ICON={u:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>',img:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.7"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>'};
+
+/* ===== LOGIKA ===== */
+var $=function(s,r){return(r||document).querySelector(s)};
+function txt(id){var e=EV[id],x=S.ev[id]&&S.ev[id].x;return x||(typeof e.fb==='function'?e.fb():e.fb)}
+function tlx(id){var t=EV[id].tl;return typeof t==='function'?t():t}
+function found(){return Object.keys(EV).filter(function(i){return S.ev[i]})}
+function cnt(k){return found().filter(function(i){return EV[i].p.indexOf(k)>-1}).length}
+function stamp(k){return S.st[k]||0}
+function rot(i){return((i*37)%5-2)*.6}
+function shown(s){var a=SHOW[s.k];if(!a)return found().some(function(i){return EV[i].p.indexOf(s.k)>-1});return a.some(function(x){return x==='@start'?S.started:S.ev[x]})}
+function qOpen(q){return q[1]==='start'?!!S.started:!!S.ev[q[1]]}
+function qList(){var ch=0,t0=Date.now();QS.forEach(function(q,i){if(qOpen(q)&&!S.qt[q[0]]){S.qt[q[0]]=t0+i;ch=1}});if(ch)save();return QS.filter(qOpen).sort(function(a,b){return(S.qt[a[0]]-S.qt[b[0]])||0})}
+function cFind(c){if(!c.re)return 1;try{for(var i=0;i<c.in.length;i++){if(findTxt(c.in[i],c.re))return 1}}catch(_){}return 0}
+function cOk(c){return(!c.ev||S.ev[c.ev])}
+function claimsHtml(s){var L=CL[s.k]||[];
+ L.forEach(function(c){if(!S.cl[c.id]&&cOk(c)&&cFind(c)){S.cl[c.id]=1;save()}});
+ var V=L.filter(function(c){return S.cl[c.id]&&cOk(c)});
+ return'<div class="nbSay"><b>Menurut '+esc(s.n())+'</b>'+(V.length?V.map(function(c){var t=S.tr[c.id]||0;return'<p>“'+esc(c.t)+'”</p><button type="button" class="nbStamp s'+TRC[t]+'" data-tr="'+c.id+'">'+TR[t]+'</button>'}).join(''):'<span class="nbNo">Belum ada keterangan.</span>')+'</div>'}
+function pSus(){var VS=SUS.filter(shown);
+ if(!VS.length)return'<div class="nbEmpty">Belum ada tersangka. Nama yang mencurigakan akan tertempel di sini saat kamu menemukan petunjuk.</div>';
+ if(!VS.some(function(s){return s.k===S.sel}))S.sel=VS[0].k;
+ var h='<div class="nbGrid">'+VS.map(function(s,i){var n=s.n(),c=cnt(s.k),st=stamp(s.k);
+  return'<div class="nbPol'+(S.sel===s.k?' sel':'')+'" data-s="'+s.k+'" style="--r:'+rot(i)+'deg"><i class="nbTape"></i><div class="nbPh">'+ICON.u+'</div><b>'+esc(n)+'</b><button type="button" class="nbStamp s'+st+'" data-st="'+s.k+'">'+STAMP[st]+'</button><span class="nbCnt">'+(c?c+' bukti':'Belum ada bukti')+'</span></div>'}).join('')+'</div>';
+ var s0=VS.filter(function(s){return s.k===S.sel})[0];
+ if(s0){var L=found().filter(function(i){return EV[i].p.indexOf(s0.k)>-1});
+  h+='<div class="nbLink"><b>Bukti untuk '+esc(s0.n())+'</b>'+(L.length?'<ul style="margin:0;padding:0">'+L.map(function(i){return'<li>'+esc(EV[i].t)+'</li>'}).join('')+'</ul>':'<span style="color:#8d877b">Belum ada bukti yang menunjuk ke sini.</span>')+'</div>';
+  h+=claimsHtml(s0)}
+ return h}
+function fotoSrc(){return M.img.foto||(function(){try{return localStorage.getItem('bk_img_foto')||''}catch(_){return''}})()}
+function clip(id,i){var e=EV[id],h='<div class="nbClip" style="--r:'+rot(i+1)+'deg"><i class="nbTape"></i>'+(S.nw[id]?'<span class="nbNewT">BARU</span>':'')+(e.e>1?'<span class="nbEpT">Episode '+e.e+'</span>':'');
+ if(e.k==='x'){h+='<div class="nbXh"><i class="nbAv">L</i><span><b>Linkon City News Network</b><small>@LCN_Breaking</small></span></div><p>BREAKING: Kepolisian Kota Linkon (LPD) resmi memulai operasi pencarian setelah seorang siswi dari Linkon Academy dilaporkan hilang.</p><p style="margin-top:7px">Korban terakhir kali terpantau berada di area gerbang timur kampus pada '+esc(gone())+', sekitar pukul 15.30.</p><div class="nbXs">21,5 rb repost · 48,2 rb suka</div><div class="nbCm"><b>Komentar pilihan</b>“Tadi lewat menfess ini di TL, kebetulan beritanya lewat sendiri. Aku kira berita baru, ternyata udah lama. Jadi dia udah ketemu belum sih?”</div>'}
+ else if(id==='pisah'){h+='<h3>'+esc(e.t)+'</h3><p class="nbQ">“'+esc(txt(id))+'”</p>'}
+ else if(e.k==='photo'){var f=fotoSrc();h+=(f?'<div class="nbPh" style="height:auto;margin-bottom:8px;overflow:hidden"><img src="'+f+'" alt="Foto" style="width:100%;max-height:230px;object-fit:cover;display:block;border-radius:3px"></div>':'<div class="nbPh" style="height:84px;margin-bottom:8px">'+ICON.img+'</div>')+'<h3>'+esc(e.t)+'</h3><p>'+esc(txt(id))+'</p>'}
+ else if(id==='tangan'){h+='<h3>'+esc(e.t)+'</h3><p class="nbQ">“'+esc(txt(id))+'”</p><p style="margin-top:7px">Tangan cowok ikut terfoto. Setelah kutegur, Unknown menghapus fotonya.</p>'}
+ else if(e.k==='item'){h+='<h3>'+esc(e.t)+'</h3><p>'+esc(txt(id))+'</p>'}
+ else h+='<h3>'+esc(e.t)+'</h3><p class="nbQ">“'+esc(txt(id))+'”</p>';
+ var tg=e.p.map(function(k){var s=SUS.filter(function(x){return x.k===k})[0];return s?'<em>'+esc(s.n())+'</em>':''}).join('');
+ return h+(tg?'<div class="nbTags">'+tg+'</div>':'')+'</div>'}
+function pEv(){var L=found().sort(function(a,b){return S.ev[a].ts-S.ev[b].ts}).reverse();return L.length?L.map(clip).join(''):'<div class="nbEmpty">Belum ada bukti. Setiap petunjuk yang kamu temukan akan tertempel di sini.</div>'}
+function pTl(){var L=found().sort(function(a,b){return EV[a].o-EV[b].o});if(!L.length)return'<div class="nbEmpty">Linimasa terisi saat kamu menemukan bukti.</div>';
+ var last=0,h='<div class="nbTl">';L.forEach(function(i){var e=EV[i].e;if(e!==last){last=e;h+='<div class="nbTlEp">Episode '+e+'</div>'}h+='<div>'+esc(tlx(i))+'</div>'});return h+'</div>'}
+function pQ(){var L=qList();if(!L.length)return'<div class="nbEmpty">Belum ada pertanyaan.</div>';var d=L.filter(function(q){return S.qc[q[0]]}).length;
+ return'<div class="nbQc">'+d+' dari '+L.length+' terjawab</div>'+L.map(function(q,i){var on=!!S.qc[q[0]];
+  return'<div class="nbSticky nbQw" style="transform:rotate('+rot(i)+'deg)"><div class="nbQi'+(on?' done':'')+'" data-qc="'+q[0]+'" role="checkbox" aria-checked="'+on+'" tabindex="0"><i class="nbBox">'+(on?'✓':'')+'</i><span>'+(i+1)+'. '+esc(q[2])+(q[3]>1?'<i class="nbQe">EP '+q[3]+'</i>':'')+'</span></div><textarea class="nbAns" data-qa="'+q[0]+'" rows="2" maxlength="600" placeholder="Tulis jawabanmu di sini..." spellcheck="false">'+esc(S.qa[q[0]]||'')+'</textarea></div>'}).join('')}
+var tab=document.createElement('div');tab.id='nbTab';tab.setAttribute('aria-label','Buku catatan kasus');
+tab.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>';
+var book=document.createElement('div');book.id='nbBook';var rings='';for(var r=0;r<9;r++)rings+='<i style="top:'+(62+r*66)+'px"></i>';
+book.innerHTML='<div class="nbSheet"><div class="nbRings">'+rings+'</div><div class="nbTop"><div class="nbGrip"></div><div class="nbHd"><div><h2></h2><p></p></div><button class="nbX0" type="button" aria-label="Tutup">✕</button></div></div><div class="nbBody"></div><div class="nbNav"><button type="button" data-d="-1" aria-label="Halaman sebelumnya">‹</button><span></span><button type="button" data-d="1" aria-label="Halaman berikutnya">›</button></div></div>';
+document.body.appendChild(tab);document.body.appendChild(book);
+var sheet=$('.nbSheet',book),body=$('.nbBody',book),toastOn=0,narOn=0;
+/* ---- ukuran iframe di halaman induk ---- */
+var lastLay='';
+function layout(){var tabOn=tab.classList.contains('on'),open=book.classList.contains('on'),m,pe=true;
+ if(open||narOn)m='full';else if(toastOn){m='full';pe=false}else if(tabOn)m='tab';else m='hidden';
+ document.documentElement.classList.toggle('tm',m==='tab');
+ var k=m+pe;if(k===lastLay)return;lastLay=k;post({bkLayout:m,pe:pe})}
+function info(){try{post({bkInfo:{n:found().length,qs:qList().filter(function(q){return !S.qc[q[0]]}).map(function(q){return q[2]})}})}catch(_){}}
+function fitAns(){try{body.querySelectorAll('.nbAns').forEach(function(t){t.style.height='auto';t.style.height=Math.min(180,t.scrollHeight+2)+'px'})}catch(_){}}
+function render(){$('.nbHd h2',book).textContent=PG[S.p][0];$('.nbHd p',book).textContent=PG[S.p][1];body.innerHTML=[pSus,pEv,pTl,pQ][S.p]();fitAns();$('.nbNav span',book).textContent=(S.p+1)+' / '+PG.length;$('[data-d="-1"]',book).disabled=S.p===0;$('[data-d="1"]',book).disabled=S.p===PG.length-1}
+function open(){tab.classList.remove('new');render();book.classList.add('on');document.body.classList.add('nb-open');body.scrollTop=0;post({bkState:'open'});layout()}
+function close(){book.classList.remove('on');document.body.classList.remove('nb-open');if(Object.keys(S.nw).length){S.nw={};save()}post({bkState:'closed'});layout()}
+function showTab(){tab.classList.add('on');layout()}
+function pull(el,drag,end){var on=0,x0=0,y0=0;
+ el.addEventListener('pointerdown',function(e){on=1;x0=e.clientX;y0=e.clientY;try{el.setPointerCapture(e.pointerId)}catch(_){}e.stopPropagation()});
+ el.addEventListener('pointermove',function(e){if(on){e.stopPropagation();drag(e.clientX-x0,e.clientY-y0)}});
+ function fin(e,c){if(!on)return;on=0;try{el.releasePointerCapture(e.pointerId)}catch(_){}e.stopPropagation();end(e.clientX-x0,e.clientY-y0,c)}
+ el.addEventListener('pointerup',function(e){fin(e,0)});el.addEventListener('pointercancel',function(e){fin(e,1)})}
+pull(tab,function(dx){tab.style.transform='translateX('+Math.max(-70,Math.min(0,dx))+'px)'},function(dx,dy,c){tab.style.transform='';if(!c&&(dx<-30||(Math.abs(dx)<7&&Math.abs(dy)<7)))open()});
+pull($('.nbTop',book),function(dx,dy){sheet.style.transform='translateY('+Math.max(0,dy)+'px)'},function(dx,dy,c){sheet.style.transform='';if(!c&&dy>90)close()});
+$('.nbX0',book).addEventListener('click',close);
+book.addEventListener('input',function(e){var t=e.target;if(t&&t.dataset&&t.dataset.qa){S.qa[t.dataset.qa]=t.value;save();t.style.height='auto';t.style.height=Math.min(180,t.scrollHeight+2)+'px'}});
+book.addEventListener('click',function(e){
+ var d=e.target.closest('[data-d]');if(d){S.p=Math.max(0,Math.min(PG.length-1,S.p+ +d.dataset.d));save();render();body.scrollTop=0;return}
+ var st=e.target.closest('[data-st]');if(st){var k=st.dataset.st;S.st[k]=((S.st[k]||0)+1)%STAMP.length;S.sel=k;save();render();return}
+ var qc=e.target.closest('[data-qc]');if(qc){var qk=qc.dataset.qc,y2=body.scrollTop;S.qc[qk]=S.qc[qk]?0:1;save();render();body.scrollTop=y2;return}
+ var tr=e.target.closest('[data-tr]');if(tr){var tk=tr.dataset.tr,y=body.scrollTop;S.tr[tk]=((S.tr[tk]||0)+1)%TR.length;save();render();body.scrollTop=y;return}
+ var p=e.target.closest('[data-s]');if(p){S.sel=p.dataset.s;save();render()}});
+/* narasi pembuka (hanya episode 1, sekali) */
+var narrT=0;
+function narr(){if(S.narr||document.getElementById('nbNar'))return;var L=NARR(),o=document.createElement('div');o.id='nbNar';
+ o.innerHTML=L.map(function(t){return'<p>'+esc(t)+'</p>'}).join('')+'<button type="button">Mulai mencatat</button><small>Ketuk untuk lanjut</small>';
+ document.body.appendChild(o);narOn=1;layout();var ps=o.querySelectorAll('p'),btn=o.querySelector('button'),i=0;
+ function next(){if(i<ps.length){ps[i++].classList.add('on');if(i===ps.length){btn.classList.add('on');o.querySelector('small').style.display='none'}}}
+ o.addEventListener('click',function(e){if(e.target===btn){o.remove();narOn=0;S.narr=1;save();showTab();tab.classList.add('new')}else next()});
+ setTimeout(next,350)}
+function start(){if(!S.started){S.started=1;save()}if(!S.narr&&!narrT){narrT=setTimeout(function(){narrT=0;narr()},1400)}}
+var tT=0;
+function toast(t){try{var el=document.getElementById('nbToast');if(!el){el=document.createElement('div');el.id='nbToast';document.body.appendChild(el)}
+ el.textContent=t;toastOn=1;layout();void el.offsetWidth;el.classList.add('on');clearTimeout(tT);tT=setTimeout(function(){el.classList.remove('on');setTimeout(function(){toastOn=0;layout()},350)},3200)}catch(_){}}
+function add(id,x){var e=EV[id];if(!e||S.ev[id])return;start();
+ S.ev[id]={ts:Date.now(),x:x||(e.re?findTxt(e.who,e.re):'')};S.nw[id]=1;save();
+ if(S.narr&&!book.classList.contains('on')){tab.classList.add('new');showTab();toast('\uD83D\uDCD3 Bukti baru dicatat: '+e.t)}
+ if(book.classList.contains('on'))render()}
+function scanTxt(){R.forEach(function(r){var t=findTxt(r[2],r[0]);if(!t)return;r[1].forEach(function(id){if(id==='@s')start();else add(id,'')})})}
+/* Dipanggil saat sebuah episode dibuka: catatan episode sebelumnya dilengkapi penuh, lalu bagian episode ini muncul bertahap. */
+function enterEp(n){n=+n||1;var first=!S.eps[n];
+ if(n>1){var t0=Date.now()-86400000,ch=0;
+  Object.keys(EV).forEach(function(id){if(EV[id].e<n&&!S.ev[id]){S.ev[id]={ts:t0+EV[id].o,x:''};ch=1}});
+  Object.keys(CL).forEach(function(k){CL[k].forEach(function(c){if(c.e<n&&!S.cl[c.id]){S.cl[c.id]=1;ch=1}})});
+  if(!S.started){S.started=1;ch=1}if(!S.narr){S.narr=1;ch=1}if(ch)save()}
+ S.eps[n]=1;save();
+ if(S.started&&S.narr)showTab();
+ if(n>1&&first){tab.classList.add('new');showTab();toast('\uD83D\uDCD3 Buku kasus diperbarui: Episode '+n)}}
+function reset(){try{localStorage.removeItem(KEY);localStorage.removeItem(OLDKEY);localStorage.removeItem('bk_img_foto')}catch(_){}location.reload()}
+window.addEventListener('message',function(e){var d=e.data;if(!d||typeof d!=='object')return;
+ if(d.caseEp)enterEp(d.caseEp);
+ if(d.caseProf&&d.caseProf.twin&&S.prof.twin!==d.caseProf.twin){S.prof.twin=d.caseProf.twin;save()}
+ if(d.caseImg&&d.caseImg.foto){M.img.foto=d.caseImg.foto;try{localStorage.setItem('bk_img_foto',d.caseImg.foto)}catch(_){}}
+ if(d.caseTxt){['U','Ibu','G'].forEach(function(k){if(Array.isArray(d.caseTxt[k]))M.txt[k]=d.caseTxt[k]});scanTxt()}
+ if(d.caseStart)start();
+ if(d.caseEv)add(d.caseEv,d.x||'');
+ if(d.bkOpen)open();
+ if(d.bkReset)reset();
+ if(d.bkDemo)demo()});
+function demo(){S.narr=1;start();Object.keys(EV).forEach(function(i){add(i,'')});showTab();open()}
+window.__bk={open:open,close:close,add:add,start:start,enterEp:enterEp,reset:reset,demo:demo,state:function(){return S}};
+if(parent===window){document.body.style.background='#26231f'}
+if(S.started&&S.narr)showTab();else if(S.started)start();
+setTimeout(function(){info();layout();post({bkReady:1})},50);
+})();
+</script>
+</body></html>
